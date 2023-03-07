@@ -297,6 +297,10 @@ State: Peer in Cluster (Connected)
 ```
 3. Выполняем запуск плэйбука setup_bx-app: `ansible-playbook setup_bx-app.yml`
 
+### Memcached, сессии
+
+
+
 ### Мониторинг, логгирование, репозиторий, DNS-сервер
 
 <!---

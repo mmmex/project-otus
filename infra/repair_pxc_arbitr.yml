@@ -1,0 +1,24 @@
+---
+- name: proxmox | repair bx-db node | create VM, setup for bx-db0x.org.test after emergency
+  hosts: localhost
+  roles:
+    - role: proxmox
+  vars:
+    single_host: true
+    vmname: bx-db03.org.test
+    ipaddress: 10.100.100.32/24
+    gateway: 10.100.100.1
+    vmid: 1132
+    cores: 2
+    sockets: 1
+    memory: 2048
+    need_net_config: true
+
+- hosts:
+  # - percona01.org.test # master and bootstrapper
+  # - percona02.org.test # master, not bootstrapper
+  - bx-db03.org.test # arbiter
+  any_errors_fatal: true
+  become: True
+  roles:
+    - xtradb_cluster

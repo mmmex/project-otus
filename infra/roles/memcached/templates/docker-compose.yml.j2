@@ -1,0 +1,16 @@
+version: '3.8'
+
+networks:
+  default:
+    #driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+
+services:
+    memcached-sessions:
+        image: memcached:1-alpine
+        hostname: memcached-sessions
+        container_name: memcached-sessions
+        restart: unless-stopped
+        ports:
+        - "11211:11211/tcp"
