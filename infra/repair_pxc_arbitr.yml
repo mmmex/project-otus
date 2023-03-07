@@ -12,11 +12,11 @@
     cores: 2
     sockets: 1
     memory: 2048
-    need_net_config: true
+    need_net_config: false
 
-- hosts:
-  # - percona01.org.test # master and bootstrapper
-  # - percona02.org.test # master, not bootstrapper
+- hosts: 
+  - bx-db01.org.test # master and bootstrapper
+  - bx-db02.org.test # master, not bootstrapper
   - bx-db03.org.test # arbiter
   any_errors_fatal: true
   become: True

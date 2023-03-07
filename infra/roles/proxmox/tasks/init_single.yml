@@ -46,6 +46,7 @@
     node:         "{{ node }}"
     state:        started
 
-- name: Waiting for 200 sec
+- name: Waiting for 300 sec
   ansible.builtin.wait_for:
-    timeout: 200
+    timeout: 300
+  when: need_net_config | bool
