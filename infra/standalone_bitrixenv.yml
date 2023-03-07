@@ -1,0 +1,7 @@
+---
+- hosts: bx-app03.org.test
+  become: true
+  roles:
+    - role: ssh-keys
+    - role: bitrixenv
+  

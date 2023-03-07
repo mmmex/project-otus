@@ -1,0 +1,26 @@
+---
+- name: Remove VMs
+  hosts: localhost
+  vars_files:
+    - vms_to_delete.yml
+  tasks:
+    - name: Stop VMs
+      proxmox_kvm:
+        node: "{{ node }}"
+        name: "{{ item.value.name }}"
+        vmid: "{{ .value.vmid }}"
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        api_host: "{{ api_host }}"
+        state: stopped
+      loop: "{{ lookup('dict', vms) }}"
+
+    - name: Remove VMs
+      proxmox_kvm:
+        api_host:     "{{ api_host }}"
+        api_user:     "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        vmid:         "{{ item.value.vmid }}"
+        node:         "{{ node }}"
+        state:        absent
+      loop: "{{ lookup('dict', vms) }}"

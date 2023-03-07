@@ -1,0 +1,31 @@
+---
+- name: Enable nginx unit
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: true
+
+- name: Add to hosts file
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1 push httpd'
+    state: present
+
+- name: Enable https
+  ansible.builtin.firewalld:
+    service: https
+    zone: public
+    state: enabled
+    permanent: yes
+    
+- name: Enable http
+  ansible.builtin.firewalld:
+    service: http
+    zone: public
+    state: enabled
+    permanent: yes
+
+- name: Copy config files
+  ansible.builtin.copy:
+    src: files/nginx/
+    dest: /etc/nginx/
+  notify: restart nginx

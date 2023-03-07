@@ -1,0 +1,18 @@
+---
+- hosts: infra.org.test
+  become: true
+  roles:
+    - bind
+  vars_files:
+    - vars/bind.yml
+
+- hosts: bx-stage1
+  become: true
+  tasks:
+    - name: copy resolv.conf to clients
+      template:
+        src: files/clients-resolv.conf
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: 0644

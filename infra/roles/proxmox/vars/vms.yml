@@ -1,0 +1,67 @@
+---
+# vars file for proxmox
+vms:
+  bx-nlb01:
+    name: bx-nlb01.org.test
+    ipaddress: 10.100.100.10/24
+    gateway: 10.100.100.1
+    vmid: 1100
+    cores: 1
+    sockets: 1
+    memory: 512
+  bx-nlb02:
+    name: bx-nlb02.org.test
+    ipaddress: 10.100.100.11/24
+    gateway: 10.100.100.1
+    vmid: 1101
+    cores: 1
+    sockets: 1
+    memory: 512
+  bx-app01:
+    name: bx-app01.org.test
+    ipaddress: 10.100.100.20/24
+    gateway: 10.100.100.1
+    vmid: 1120
+    cores: 2
+    sockets: 1
+    memory: 2048
+  bx-app02:
+    name: bx-app02.org.test
+    ipaddress: 10.100.100.21/24
+    gateway: 10.100.100.1
+    vmid: 1121
+    cores: 2
+    sockets: 1
+    memory: 2048
+  bx-app03:
+    name: bx-app03.org.test
+    ipaddress: 10.100.100.22/24
+    gateway: 10.100.100.1
+    vmid: 1122
+    cores: 2
+    sockets: 1
+    memory: 2048
+  bx-db01:
+    name: bx-db01.org.test
+    ipaddress: 10.100.100.30/24
+    gateway: 10.100.100.1
+    vmid: 1130
+    cores: 2
+    sockets: 1
+    memory: 2048
+  bx-db02:
+    name: bx-db02.org.test
+    ipaddress: 10.100.100.31/24
+    gateway: 10.100.100.1
+    vmid: 1131
+    cores: 2
+    sockets: 1
+    memory: 2048
+  bx-db03:
+    name: bx-db03.org.test
+    ipaddress: 10.100.100.32/24
+    gateway: 10.100.100.1
+    vmid: 1132
+    cores: 2
+    sockets: 1
+    memory: 2048

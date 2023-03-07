@@ -1,0 +1,6 @@
+---
+- ansible.builtin.include: prepare.yml
+
+- ansible.builtin.include: nginx.yml
+
+- ansible.builtin.include: keepalived.yml

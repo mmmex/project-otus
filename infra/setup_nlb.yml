@@ -1,0 +1,22 @@
+---
+# https://github.com/acassen/keepalived/tree/master/doc/samples
+# https://github.com/evrardjp/ansible-keepalived
+- hosts: localhost
+  roles:
+    - role: proxmox
+  vars:
+    single_host: true
+    vmname: bx-nlb02.org.test
+    ipaddress: 10.100.100.11/24
+    gateway: 10.100.100.1
+    vmid: 1101
+    cores: 1
+    sockets: 1
+    memory: 512
+
+- hosts: bx-nlb02.org.test
+  become: true
+  roles:
+    # - role: nginx-proxy
+    # - role: keepalived
+    - role: load-balancer 

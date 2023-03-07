@@ -1,0 +1,26 @@
+---
+- name: Restart VMs
+  hosts: localhost
+  vars_files:
+    - vms_to_restart.yml
+  tasks:
+    - name: Restart VMs
+      proxmox_kvm:
+        node: "{{ node }}"
+        name: "{{ item.value.name }}"
+        vmid: "{{ item.value.vmid }}"
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        api_host: "{{ api_host }}"
+        state: restarted
+      loop: "{{ lookup('dict', vms) }}"
+
+    # - name: Remove VMs
+    #   proxmox_kvm:
+    #     api_host:     "{{ api_host }}"
+    #     api_user:     "{{ api_user }}"
+    #     api_password: "{{ api_password }}"
+    #     vmid:         "{{ item.value.vmid }}"
+    #     node:         "{{ node }}"
+    #     state:        absent
+    #   loop: "{{ lookup('dict', vms) }}"

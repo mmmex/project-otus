@@ -1,0 +1,25 @@
+---
+- name: prepare | set timezone to Europe/Moscow
+  ansible.builtin.timezone:
+    name: Europe/Moscow
+
+- name: prepare | install dependencies
+  ansible.builtin.yum:
+    name:
+      - lvm2
+      - centos-release-gluster
+      - firewalld
+    state: present
+
+- name: prepare | install gluster-server
+  ansible.builtin.yum:
+    name: glusterfs-server
+    state: present
+
+- name: prepare | enable and start unit glusterd
+  ansible.builtin.systemd:
+    name: glusterd
+    enabled: true
+    state: started
+
+    

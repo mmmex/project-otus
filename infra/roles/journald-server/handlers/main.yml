@@ -1,0 +1,12 @@
+---
+# handlers file for journald-server
+- name: restart systemd-journal-upload
+  systemd:
+    name: systemd-journal-upload
+    state: restarted
+
+- name: restart systemd-journal-remote.service
+  systemd:
+    name: systemd-journal-remote
+    state: restarted
+    daemon_reload: yes

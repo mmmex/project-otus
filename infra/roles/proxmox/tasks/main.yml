@@ -1,0 +1,7 @@
+---
+# tasks file for proxmox
+# - ansible.builtin.include: init.yml
+#   when: not single_host
+
+- ansible.builtin.include: init_single.yml
+  when: single_host | bool

@@ -1,0 +1,28 @@
+---
+bind__allow_query:
+  - '10.100.100.0/24'
+  - 'localhost'
+bind__listen_on:
+  - 10.100.100.250
+  - 127.0.0.1
+bind__allow_recursion: '10.100.100.0/24'
+bind__empty_contact: 'admin@org.test'
+bind__allow_query: '192.168.2.1; 10.100.100.0/24; localhost'
+bind__global_zones:
+  'org.test':
+    type: 'master'
+    file: 'auto'
+    entries:
+      - { name: '@',                 type: 'NS',     data: 'infra.org.test.'  }
+      - { name: 'infra.org.test.',   type: 'A',      data: '10.100.100.250'   }
+      - { name: 'zbx.org.test.',     type: 'A',      data: '10.100.100.250'   }
+      - { name: 'bitrix.org.test.',  type: 'A',      data: '10.100.100.100'   }
+      - { name: 'bx-nlb01',          type: 'A',      data: '10.100.100.10'    }
+      - { name: 'bx-nlb02',          type: 'A',      data: '10.100.100.11'    }
+      - { name: 'bx-app01',          type: 'A',      data: '10.100.100.20'    }
+      - { name: 'bx-app02',          type: 'A',      data: '10.100.100.21'    }
+      - { name: 'bx-app03',          type: 'A',      data: '10.100.100.22'    }
+      - { name: 'bx-db01',           type: 'A',      data: '10.100.100.30'    }
+      - { name: 'bx-db02',           type: 'A',      data: '10.100.100.31'    }
+      - { name: 'bx-db03',           type: 'A',      data: '10.100.100.32'    }
+...

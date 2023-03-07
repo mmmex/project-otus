@@ -1,0 +1,8 @@
+---
+# defaults file for proxysql
+# create_db: "zabbix"
+# createuser: true
+user_db: "zabbix"
+user_db_pass: "Otus2023!"
+mysql_monitor_user: "proxysql"
+mysql_monitor_password: "Otus2023!"

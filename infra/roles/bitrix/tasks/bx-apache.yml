@@ -1,0 +1,18 @@
+---
+- name: Enable httpd unit
+  ansible.builtin.systemd:
+    name: httpd
+    enabled: true
+
+- name: Create /var/www/html/bx-site
+  ansible.builtin.file:
+    path: /var/www/html/bx-site
+    owner: apache
+    group: apache
+    state: directory
+
+- name: Copy config files
+  ansible.builtin.copy:
+    src: files/httpd/
+    dest: /etc/httpd/
+  notify: restart httpd

@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Change time to Europe/Moscow
+    ansible.builtin.timezone: 
+      name: Europe/Moscow

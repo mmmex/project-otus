@@ -1,0 +1,59 @@
+---
+- name: gluster | enable unit and start
+  ansible.builtin.systemd:
+    name: glusterd
+    enabled: true
+    state: started
+
+- name: gluster | create gluster volume
+  ansible.builtin.file:
+    path: /data/brick1/gv0
+    state: directory
+
+- name: gluster | create volume
+  ansible.builtin.gluster_volume:
+    state: started
+    name: gv0
+    bricks: /data/brick1/gv0
+    rebalance: yes
+    replicas: 3
+    force: yes
+    cluster:
+      - bx-app01
+      - bx-app02
+      - bx-app03
+  run_once: true
+
+# - name: gluster | start volume
+#   ansible.builtin.gluster_volume:
+#     name: gv0
+#     state: started
+
+- name: gluster | mount volume
+  ansible.builtin.mount:
+    path: /var/www/html/bx-site
+    opts: backup-volfile-servers=bx-app01:bx-app02:bx-app03
+    fstype: glusterfs
+    src: bx-app01:/gv0
+    state: mounted
+
+# - name: gluster | create volume
+#   ansible.builtin.shell: |
+#     gluster volume create gv0 replica 3 bx-app01:/data/brick1/gv0 bx-app02:/data/brick1/gv0 bx-app03:/data/brick1/gv0
+#     gluster volume start gv0
+
+# - name: gluster | mount directory
+#   ansible.builtin.shell: |
+#     mount -t glusterfs -o backup-volfile-servers=bx-app01:bx-app02:bx-app03 bx-app03:/gv0 /var/www/html/bx-site
+
+
+# gluster volume create gv0 replica 3 bx-app01:/data/brick1/gv0 bx-app02:/data/brick1/gv0 bx-app03:/data/brick1/gv0
+# gluster volume start gv0
+# mount -t glusterfs bx-app03:/gv0 /var/www/html/bx-site
+# mount -t glusterfs -o backup-volfile-servers=bx-app01:bx-app02:bx-app03 bx-app03:/gv0 /var/www/html/bx-site
+
+# https://docs.gluster.org/en/latest/Administrator-Guide/Managing-Volumes/#systems-other-than-red-hat-and-debian
+# replace brick
+# gluster volume status
+# 1. kill pid on server where running
+# 2. 

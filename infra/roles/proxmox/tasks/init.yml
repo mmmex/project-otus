@@ -1,0 +1,55 @@
+---
+- name: Clone VMs
+  proxmox_kvm:
+    node:         "{{ node }}"
+    name:         "{{ item.value.name }}"
+    newid:        "{{ item.value.vmid }}"
+    api_user:     "{{ api_user }}"
+    api_password: "{{ api_password }}"
+    api_host:     "{{ api_host }}"
+    clone:        "{{ clone_vm }}"
+    # full:         yes
+  loop: "{{ lookup('dict', vms) }}"
+
+- name: Set IP addresses and change bridge DMZ
+  shell: |
+    ssh root@192.168.2.2 'qm set {{ item.value.vmid }} --ipconfig0 ip={{ item.value.ipaddress }},gw={{ item.value.gateway }}'
+    ssh root@192.168.2.2 'qm set {{ item.value.vmid }} --net0 "model=virtio,bridge=vmbr2"'
+  loop: "{{ lookup('dict', vms) }}"
+    
+    # - name: Copy SSH key
+    #   command: "qm set {{ item.value.vmid }} --sshkey {{ key_name }}"
+    #   args:
+    #     chdir: /tmp
+    #   loop: "{{ lookup('dict', vms) }}"
+
+- name: Update VMs
+  proxmox_kvm:
+    api_host:     "{{ api_host }}"
+    api_user:     "{{ api_user }}"
+    api_password: "{{ api_password }}"
+    cores:        "{{ item.value.cores }}"
+    sockets:      "{{ item.value.sockets }}"
+    memory:       "{{ item.value.memory }}"
+    update:       yes
+    bootdisk:     scsi0
+    vga:          serial0
+    # net:          '{ "net0" : "model=virtio,bridge=vmbr2" }'
+    # net0:
+    #   model:  "virtio"
+    #   bridge: "vmbr2"
+    vmid:         "{{ item.value.vmid }}"
+    node:         "{{ node }}"
+    name:         "{{ item.value.name }}"
+    # args:         '--net0 "model=virtio,bridge=vmbr2"'
+  loop: "{{ lookup('dict', vms) }}"
+
+- name: Start VMs
+  proxmox_kvm:
+    api_host:     "{{ api_host }}"
+    api_password: "{{ api_password }}"
+    api_user:     "{{ api_user }}"
+    vmid:         "{{ item.value.vmid }}"
+    node:         "{{ node }}"
+    state:        started
+  loop: "{{ lookup('dict', vms) }}"

@@ -1,0 +1,31 @@
+version: '3'
+services:
+  netdata:
+    image: netdata/netdata:stable
+    container_name: netdata
+    hostname: {{ ansible_fqdn }} # set to fqdn of host
+    ports:
+      - 19999:19999
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - netdataconfig:/etc/netdata
+      - netdatalib:/var/lib/netdata
+      - netdatacache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+    environment:
+      - NETDATA_CLAIM_TOKEN=5fLwBI2HwUINCJ6fRNRwpZoVH8wjLvvIrQYTlhnxZL_DmhgnGiLvG9SOERBBJiqMpG9LGQRCiSc4HpqSot_8udUYEdIhsz28kUV3nBooGcNE2e5xP7jIDis4tXKo2e1WJ7vtCVA
+      - NETDATA_CLAIM_URL=https://app.netdata.cloud
+      - NETDATA_CLAIM_ROOMS=8868394e-ee40-4f0a-b488-dcb7bad8766c
+
+volumes:
+  netdataconfig:
+  netdatalib:
+  netdatacache:

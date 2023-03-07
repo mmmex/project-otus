@@ -1,0 +1,9 @@
+---
+ansible_user: mex
+ansible_ssh_port: 22
+ansible_ssh_private_key_file: ~/.ssh/proxmox-dc
+timezone: Europe/Moscow
+etc_hosts:
+  - "10.100.100.20 bx-app01.org.test bx-app01"
+  - "10.100.100.21 bx-app02.org.test bx-app02"
+  - "10.100.100.22 bx-app03.org.test bx-app03"

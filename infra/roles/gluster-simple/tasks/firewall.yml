@@ -1,0 +1,19 @@
+---
+- name: firewall | add service nfs
+  ansible.builtin.firewalld:
+    zone: public
+    service: nfs
+    permanent: true
+    state: enabled
+
+- name: firewall | add whitelist
+  ansible.builtin.firewalld:
+    source: 0.0.0.0/0
+    state: enabled
+    permanent: true
+
+- name: firewall | start and enable unit firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    enabled: true
+    state: stopped

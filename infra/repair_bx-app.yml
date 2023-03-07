@@ -1,0 +1,29 @@
+---
+- name: proxmox | repair bx-app node | create VM, setup for bx-app0x.org.test after emergency
+  hosts: localhost
+  roles:
+    - role: proxmox
+  vars:
+    single_host: true
+    vmname: bx-app03.org.test
+    ipaddress: 10.100.100.22/24
+    gateway: 10.100.100.1
+    vmid: 1122
+    cores: 2
+    sockets: 1
+    memory: 2048
+    scsi1_disk_size: 500
+
+- name: repair bx-app node | starting setup
+  hosts: bx-app03.org.test
+  become: true
+  vars:
+    master_ghost: bx-app02.org.test
+    is_replacing: true
+  roles:
+    - role: etc_hosts
+    - role: gluster-simple
+    - role: bitrix
+    - role: netdata
+    - role: audit-client
+    - role: journald-client

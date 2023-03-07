@@ -1,0 +1,109 @@
+---
+- name: prepare | set timezone
+  ansible.builtin.timezone:
+    name: Europe/Moscow
+
+- name: prepare | install epel-release
+  ansible.builtin.yum:
+    name: epel-release
+    state: latest
+
+- name: prepare | install dependencies
+  ansible.builtin.package:
+    name:
+      - wget
+      - unzip
+      - python3-pip
+      - libselinux-python
+      - libsemanage-python
+      - firewalld
+    state: present
+
+- name: prepare | install pexpect
+  pip:
+    name: pexpect>=3.3
+    executable: pip3
+
+- name: prepare | set root password and generate ssh-key
+  ansible.builtin.user:
+    name: root
+    generate_ssh_key: yes
+    ssh_key_type: "ed25519"
+    password: "{{ bx_root_password }}"
+
+- name: prepare | yum clean all
+  command: yum clean all
+
+- name: prepare | yum update
+  ansible.builtin.yum:
+    name: '*'
+    state: latest
+
+- name: prepare | Put SELinux in permissive mode, logging actions that would be blocked.
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: prepare | install httpd
+  ansible.builtin.yum:
+    name: httpd
+    state: present
+
+- name: prepare | install Remi's repo
+  ansible.builtin.yum:
+    name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+
+- name: prepare | enable repo Remi's and install php7.4
+  ansible.builtin.yum:
+    name:
+    - php
+    - php-cli
+    - php-common
+    - php-devel
+    - php-gd
+    - php-json
+    - php-mbstring
+    - php-mysqlnd
+    - php-opcache
+    - php-pdo
+    - php-pear
+    - php-pecl-apcu
+    - php-pecl-zip
+    - php-process
+    - php-xml
+    - php-ldap
+    - php-memcache
+    enablerepo: remi-php74
+
+- name: prepare | install repo nodejs using nodesource
+  ansible.builtin.shell: |
+    curl --silent --location https://rpm.nodesource.com/setup_10.x | bash - >/dev/null 2>&1
+
+- name: prepare | install percona repo
+  ansible.builtin.yum:
+    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+    state: present
+
+- name: prepare | enable percona-release enable-only pxc-80
+  ansible.builtin.shell: |
+    percona-release enable-only pxc-80
+
+- name: prepare | install client cluster
+  ansible.builtin.yum:
+    name: Percona-XtraDB-Cluster-client
+    state: present
+
+- name: prepare | install proxysql
+  ansible.builtin.yum:
+    name: https://github.com/sysown/proxysql/releases/download/v2.4.8/proxysql-2.4.8-1-centos7.x86_64.rpm
+    state: present
+
+- name: prepare | install nginx,nodejs,redis,memcache
+  ansible.builtin.yum:
+    name:
+    - nginx
+    - nodejs
+    - redis
+    - memcached
+    state: present

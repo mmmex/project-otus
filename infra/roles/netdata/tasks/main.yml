@@ -1,0 +1,56 @@
+---
+# tasks file for netdata
+- name: Install epel-release
+  ansible.builtin.yum:
+    name:
+      - epel-release
+    state: latest
+
+- name: Install repo docker
+  ansible.builtin.yum_repository:
+    name: docker-ce-stable
+    description: Docker CE Stable
+    file: docker-ce.repo
+    baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+    gpgcheck: true
+    enabled: true
+    gpgkey: https://download.docker.com/linux/centos/gpg
+
+- name: Install docker-ce
+  ansible.builtin.yum:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: latest
+
+- name: Start docker unit
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Get docker-compose
+  ansible.builtin.get_url:
+    url: https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-x86_64
+    dest: /usr/local/sbin/docker-compose
+    mode: 0777
+
+- name: Create dir /opt/netdata
+  ansible.builtin.file:
+    path: /opt/netdata
+    state: directory
+
+- name: Copy docker-compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/netdata/docker-compose.yml
+
+- name: Start container
+  ansible.builtin.shell:
+    cmd: "/usr/local/sbin/docker-compose -f docker-compose.yml up -d"
+    chdir: /opt/netdata
+    
+    

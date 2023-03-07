@@ -1,0 +1,5 @@
+---
+- hosts: infra.org.test
+  become: true
+  roles:
+  - role: proxysql

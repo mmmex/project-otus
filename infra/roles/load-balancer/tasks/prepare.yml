@@ -1,0 +1,74 @@
+---
+# https://habr.com/ru/company/netangels/blog/326400/
+- name: prepare | set timezone
+  ansible.builtin.timezone:
+    name: Europe/Moscow
+
+- name: prepare | install epel-release
+  ansible.builtin.yum:
+    name:
+      - epel-release
+    state: latest
+
+- name: prepare | install keepalived, ipvsadm
+  ansible.builtin.yum:
+    name:
+      - keepalived
+      - ipvsadm
+    state: latest
+
+- name: prepare | ensure that module ip_vs loaded
+  ansible.builtin.modprobe:
+    name: ip_vs
+    state: present
+    # params: 'conn_tab_bits=18'
+
+- name: prepare | config net.ipv4.ip_forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: prepare | config ip_nonlocal_bind
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: prepare | config vs.drop_entry
+  sysctl:
+    name: net.ipv4.vs.drop_entry
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: prepare | set nf_conntrack_max
+  sysctl:
+    name: net.nf_conntrack_max
+    value: '4194304'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: prepare | config ipvsadm
+  ansible.builtin.lineinfile:
+    path: /etc/modprobe.d/ip_vs.conf
+    line: options ip_vs conn_tab_bits=18
+    create: true
+    state: present
+
+- name: prepare | touch file rules
+  ansible.builtin.file:
+    path: /etc/sysconfig/ipvsadm
+    state: touch
+
+- name: prepare | enable and start unit ipvsadm
+  ansible.builtin.systemd:
+    name: ipvsadm
+    enabled: true
+    state: started

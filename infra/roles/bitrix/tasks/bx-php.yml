@@ -1,0 +1,6 @@
+---
+- name: Copy config files
+  ansible.builtin.copy:
+    src: files/php.d/
+    dest: /etc/php.d/
+  # notify: restart httpd

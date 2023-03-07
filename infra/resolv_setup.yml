@@ -1,0 +1,5 @@
+---
+- hosts: infra
+  become: true
+  roles:
+    - resolv

@@ -1,0 +1,57 @@
+---
+# - name: Install dependencies and add .my.cnf
+#   hosts: percona_cluster
+#   become: true
+#   vars:
+#     # percona_system_password: 'NXn1B2tXzMbLwKsnnt7UeFKWXRiHtm'
+#     percona_root_password: 'GHvUfg8VjhWm1taPctEdyrFwZ7itke'
+#   tasks:
+#   - ansible.builtin.yum:
+#       name: epel-release
+#       state: latest
+
+#   - ansible.builtin.yum:
+#       name:
+#       - dnf
+#       - python2-PyMySQL
+#       state: latest
+
+  # - name: depend | touch .my.cnf
+  #   ansible.builtin.file:
+  #     path: ~/.my.cnf
+  #     state: touch
+  #     mode: u=rw
+
+  # - name: depend | make .my.cnf
+  #   ansible.builtin.ini_file:
+  #     dest: ~/.my.cnf
+  #     section: client
+  #     option: password
+  #     value: "{{ percona_root_password }}"
+  #     mode: 0600
+  #     backup: no
+
+- hosts: percona_cluster
+  # - percona01.org.test # master and bootstrapper
+  # - percona02.org.test # master, not bootstrapper
+  # - percona03.org.test # arbiter
+  any_errors_fatal: true
+  become: True
+  # tasks:
+  # - name: root | set debian-sys-maint user and password
+  #   mysql_user:
+  #     name: debian-sys-maint
+  #     password: "{{ percona_system_password }}"
+  #     priv: '*.*:ALL,GRANT'
+  #     update_password: always
+  #     state: present
+  #     login_unix_socket: /var/run/mysqld/mysqld.sock
+  #     login_user: root
+  #     login_password: "{{ percona_root_password }}"
+  #   no_log: false
+  roles:
+    - xtradb_cluster
+  # vars:
+    # percona_system_password: 'NXn1B2tXzMbLwKsnnt7UeFKWXRiHtm'
+    # percona_root_password: 'GHvUfg8VjhWm1taPctEdyrFwZ7itke'
+    # set_root_pw: true

@@ -1,0 +1,40 @@
+---
+- name: setsebool -P httpd_can_network_connect 1
+  ansible.builtin.seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+
+- name: setsebool -P nis_enabled 1
+  ansible.builtin.seboolean:
+    name: nis_enabled
+    state: yes
+    persistent: yes
+
+- name: setsebool -P httpd_unified 1
+  ansible.builtin.seboolean:
+    name: httpd_unified
+    state: yes
+    persistent: yes
+
+- name: setsebool -P httpd_use_fusefs 1
+  ansible.builtin.seboolean:
+    name: httpd_use_fusefs
+    state: yes
+    persistent: yes
+
+- name: Put SELinux in permissive mode, logging actions that would be blocked.
+  selinux:
+    policy: targeted
+    state: enforcing
+
+- name: finish | register mysql_servers
+  ansible.builtin.shell: |
+    mysql -u admin -padmin -h 127.0.0.1 -P 6032 -e "
+      SELECT * FROM mysql_servers;
+      SELECT * FROM monitor.mysql_server_connect_log ORDER BY time_start_us DESC LIMIT 6;"
+  register: result
+
+- name: finish | show mysql_servers
+  ansible.builtin.debug:
+    msg: "{{ result.stdout_lines }}"

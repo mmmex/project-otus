@@ -1,0 +1,8 @@
+---
+percona_cluster:
+  enabled: true
+  name: 'bitrix-percona-cluster'
+  role: master  # master or arbiter
+  bootstrapper: false
+  server_id: '2'  # must be unique
+  ip_address: '10.100.100.31'

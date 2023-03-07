@@ -1,0 +1,50 @@
+---
+- name: Clone VMs
+  proxmox_kvm:
+    node:         "{{ node }}"
+    name:         "{{ vmname }}"
+    newid:        "{{ vmid }}"
+    api_user:     "{{ api_user }}"
+    api_password: "{{ api_password }}"
+    api_host:     "{{ api_host }}"
+    clone:        "{{ clone_vm }}"
+    full:         yes
+    timeout: 100
+
+- name: Set IP addresses and change bridge DMZ
+  shell: |
+    ssh root@192.168.2.2 'qm set {{ vmid }} --ipconfig0 ip={{ ipaddress }},gw={{ gateway }}'
+    ssh root@192.168.2.2 'qm set {{ vmid }} --net0 "model=virtio,bridge=vmbr2"'
+
+- name: Add additional disk scsi1 size=500G
+  shell: |
+    ssh root@192.168.2.2 'qm set {{ vmid }} --scsi1 local-lvm:{{ scsi1_disk_size }}'
+  when: scsi1_disk_size is defined
+
+- name: Update VMs
+  proxmox_kvm:
+    api_host:     "{{ api_host }}"
+    api_user:     "{{ api_user }}"
+    api_password: "{{ api_password }}"
+    cores:        "{{ cores }}"
+    sockets:      "{{ sockets }}"
+    memory:       "{{ memory }}"
+    update:       yes
+    bootdisk:     scsi0
+    vga:          serial0
+    vmid:         "{{ vmid }}"
+    node:         "{{ node }}"
+    name:         "{{ vmname }}"
+
+- name: Start VMs
+  proxmox_kvm:
+    api_host:     "{{ api_host }}"
+    api_password: "{{ api_password }}"
+    api_user:     "{{ api_user }}"
+    vmid:         "{{ vmid }}"
+    node:         "{{ node }}"
+    state:        started
+
+- name: Waiting for 300 sec
+  ansible.builtin.wait_for:
+    timeout: 300

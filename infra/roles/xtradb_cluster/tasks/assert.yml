@@ -1,0 +1,63 @@
+---
+- name: assert | get all installed packages
+  package_facts:
+    manager: auto
+
+- name: assert | set amount of hosts in play
+  set_fact:
+    host_count: "{{ ansible_play_hosts | length }}"
+
+- name: assert | ensure that cluster is active with multiple hosts in play
+  assert:
+    that: percona_cluster.enabled
+  when: host_count != '1'
+
+- name: assert | set fact when percona is installed
+  set_fact:
+    installed: "{{ 'percona-xtradb-cluster-server' in ansible_facts.packages }}"
+
+- name: assert | set multiple facts when clustering
+  set_fact:
+    bootstrapper: "{{ percona_cluster.bootstrapper }}"
+    arbiter: "{{ percona_cluster.role == 'arbiter' }}"
+    arbiter_installed: >-
+      {{ 'percona-xtradb-cluster-garbd' in ansible_facts.packages }}
+  when: host_count != '1'
+
+- name: assert | set facts when single node
+  set_fact:
+    arbiter: false
+    arbiter_installed: false
+  when: host_count == '1'
+
+- name: assert | ensure passwords are changed
+  assert:
+    that:
+      - "'change_me' not in percona_root_password"
+      - "'change_me' not in percona_system_password"
+      - "'change_me' not in percona_sst_password"
+
+- block:
+
+    - name: assert | create dictionary of bootstrappers
+      set_fact:
+        bootstrappers: "{{ dict(keys|zip(values)) }}"
+      vars:
+        keys: "{{ ansible_play_hosts }}"
+        values: "{{ ansible_play_hosts|
+                    map('extract', hostvars, ['bootstrapper']) |
+                    list }}"
+
+    - name: assert | create list of bootstrappers
+      set_fact:
+        bootstrappers_list: "{{ bootstrappers | dict2items |
+                       selectattr('value') |
+                       map(attribute='key') |
+                       list }}"
+
+    - name: assert | that there is exactly one bootstrapper
+      assert:
+        that: bootstrappers_list | length == 1
+
+  run_once: true
+  when: percona_cluster.enabled

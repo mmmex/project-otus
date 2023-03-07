@@ -1,0 +1,21 @@
+---
+# handlers file for load-balancer
+- name: restart keepalived
+  ansible.builtin.systemd:
+    name: keepalived
+    state: restarted
+
+- name: restart nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
+
+- name: reload keepalived
+  ansible.builtin.systemd:
+    name: keepalived
+    state: reloaded
+
+- name: reload nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: reloaded

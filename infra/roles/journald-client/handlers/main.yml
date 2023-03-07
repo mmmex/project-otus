@@ -1,0 +1,6 @@
+---
+# handlers file for journald-client
+- name: restart systemd-journal-upload
+  systemd:
+    name: systemd-journal-upload
+    state: restarted

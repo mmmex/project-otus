@@ -1,0 +1,33 @@
+---
+- name: nginx | add local repo
+  ansible.builtin.yum_repository:
+    name: local-repo
+    description: Local repo
+    baseurl: http://10.100.100.250/
+    enabled: true
+
+- name: nginx | yum clean all
+  ansible.builtin.command: yum clean all
+    
+- name: nginx | install nginx
+  ansible.builtin.yum:
+    name: nginx
+    state: present
+    disable_gpg_check: true
+
+- name: nginx | copy config files
+  ansible.builtin.template:
+    src: web-server.conf.j2
+    dest: /etc/nginx/conf.d/web-server.conf
+  notify: restart nginx
+
+- name: nginx | delete default.conf
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+
+- name: enginx | enable and start unit
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: true
+    state: started

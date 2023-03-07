@@ -1,0 +1,41 @@
+api_host: 192.168.2.2
+api_user: ansible@pve
+api_password: "Ansible@!"
+node: pve
+vms:
+  # balancer01:
+  #   name: balancer01.org.test
+  #   vmid: 1100
+  # balancer02:
+  #   name: balancer02.org.test
+  #   vmid: 1101
+  bx01:
+    name: bx01.org.test
+    vmid: 1120
+  bx02:
+    name: bx02.org.test
+    vmid: 1121
+  # bx03:
+  #   name: bx03.org.test
+  #   vmid: 1122
+  # percona01:
+  #   name: percona01.org.test
+  #   vmid: 1130
+  # percona02:
+  #   name: percona02.org.test
+  #   vmid: 1131
+  # percona03:
+  #   name: percona03.org.test
+  #   vmid: 1132
+  # ceph01:
+  #   name: ceph01.org.test
+  #   vmid: 1140
+  # ceph02:
+  #   name: ceph02.org.test
+  #   vmid: 1141
+  # ceph03:
+  #   name: ceph03.org.test
+  #   vmid: 1142
+  # infra:
+  #   name: infra.org.test
+  #   vmid: 1110

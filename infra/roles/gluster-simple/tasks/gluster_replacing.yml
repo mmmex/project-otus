@@ -1,0 +1,81 @@
+---
+- name: gluster restore | enable unit and start
+  ansible.builtin.systemd:
+    name: glusterd
+    enabled: true
+    state: started
+
+- name: gluster restore | make dir /data/brick1/gv0
+  ansible.builtin.file:
+    path: /data/brick1/gv0
+    state: directory
+
+- name: gluster restore | make dir /var/www/html/bx-site
+  ansible.builtin.file:
+    path: /var/www/html/bx-site
+    state: directory
+
+- name: gluster restore | make probe and add replica
+  ansible.builtin.shell: |
+    gluster peer probe "{{ ansible_hostname }}"
+    gluster volume add-brick gv0 replica 3 "{{ ansible_hostname }}":/data/brick1/gv0
+  delegate_to: "{{ master_ghost }}"
+
+- name: gluster restore | mount volume
+  ansible.builtin.mount:
+    path: /var/www/html/bx-site
+    opts: backup-volfile-servers=bx-app01:bx-app02:bx-app03
+    fstype: glusterfs
+    src: "{{ master_ghost }}:/gv0"
+    state: mounted
+
+# Wrong way:
+# https://access.redhat.com/documentation/en-us/red_hat_gluster_storage/3.1/html/administration_guide/sect-replacing_hosts
+# - name: gluster | replacing | stop unit glusterd
+#   ansible.builtin.systemd:
+#     name: glusterd
+#     state: stopped
+
+# - name: register UUID node
+#   ansible.builtin.shell: |
+#     gluster peer status | grep -B1 'Disconnected' | grep Uuid | sed 's/Uuid: //g'
+#   register: uuid
+#   delegate_to: "{{ master_ghost }}"
+
+# - name: add register UUID to file
+#   ansible.builtin.replace:
+#     path: /var/lib/glusterd/glusterd.info
+#     regexp: '^UUID.*'
+#     replace: 'UUID={{ uuid.stdout }}'
+
+# - name: copy /var/lib/glusterd/peers/ from bx-app01
+#   ansible.builtin.fetch:
+#     src: /var/lib/glusterd/peers/162ebb8c-f055-40df-a4a2-002d6c3baf3b
+#     dest: files/162ebb8c-f055-40df-a4a2-002d6c3baf3b
+#     flat: true
+#   delegate_to: bx-app01.org.test
+
+# - name: copy /var/lib/glusterd/peers/ from bx-app02
+#   ansible.builtin.fetch:
+#     src: /var/lib/glusterd/peers/bfa41c6c-0357-4846-9b6c-f8704fe61d0a
+#     dest: files/bfa41c6c-0357-4846-9b6c-f8704fe61d0a
+#     flat: true
+#   delegate_to: bx-app02.org.test
+
+# - name: copy to bx-app03
+#   ansible.builtin.copy:
+#     src: files/bfa41c6c-0357-4846-9b6c-f8704fe61d0a
+#     dest: /var/lib/glusterd/peers/
+
+# - name: copy to bx-app03
+#   ansible.builtin.copy:
+#     src: files/162ebb8c-f055-40df-a4a2-002d6c3baf3b
+#     dest: /var/lib/glusterd/peers/
+
+# - name: copy files
+#   ansible.builtin.synchronize:
+#     src: /var/lib/glusterd/peers/
+#     dest: /var/lib/glusterd/peers/
+#     dirs: true
+#   delegate_to: bx-app01.org.test
+    

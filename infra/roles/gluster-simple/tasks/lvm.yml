@@ -1,0 +1,40 @@
+---
+- name: lvm | create new LVM partition
+  parted:
+    device: /dev/sdb
+    label: gpt
+    number: 1
+    flags: [ lvm ]
+    state: present
+
+- name: lvm | create VG bitrix-vg
+  lvg:
+    vg: bitrix-vg
+    pvs: /dev/sdb1
+    pesize: "4"
+
+- name: lvm | create LV site-lv
+  lvol:
+    vg: bitrix-vg
+    lv: site-lv
+    size: 100g
+    force: yes
+
+- name: lvm | format partition in xfs
+  filesystem:
+    fstype: xfs
+    dev: /dev/bitrix-vg/site-lv
+
+- name: lvm | create directory /data/brick1
+  ansible.builtin.file:
+    path: /data/brick1
+    state: directory
+
+- name: lvm | mount brick1
+  ansible.builtin.mount:
+    path: /data/brick1
+    src: /dev/bitrix-vg/site-lv
+    fstype: xfs
+    dump: 1
+    passno: 2
+    state: mounted

@@ -1,0 +1,6 @@
+---
+- hosts: infra.org.test
+  become: true
+  roles:
+  - role: journald-server
+  - role: audit-server

@@ -1,0 +1,19 @@
+---
+- hosts: bx-stage1
+  become: true
+  tasks:
+    # - name: Redo start
+    #   ansible.builtin.shell: |
+    #     yum-complete-transaction --cleanup-only
+    #     yum history redo last
+    #   register: result
+    # - name: Debug result
+    #   ansible.builtin.debug:
+    #     var: result
+    - name: command
+      ansible.builtin.command: rpm -ev --nodeps mariadb-libs-5.5.68-1.el7.x86_64
+      register: result
+    - name: Debug result
+      ansible.builtin.debug:
+        var: result
+

@@ -1,0 +1,43 @@
+---
+# tasks file for proxysql
+- name: prepare | install percona repo
+  ansible.builtin.yum:
+    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+    state: present
+
+- name: prepare | enable percona-release enable-only pxc-80
+  ansible.builtin.shell: |
+    percona-release enable-only pxc-80
+
+- name: prepare | install client cluster
+  ansible.builtin.yum:
+    name: Percona-XtraDB-Cluster-client
+    state: present
+
+- name: prepare | install proxysql
+  ansible.builtin.yum:
+    name: https://github.com/sysown/proxysql/releases/download/v2.4.8/proxysql-2.4.8-1-centos7.x86_64.rpm
+    state: present
+
+- name: proxysql | start and enable unit
+  ansible.builtin.systemd:
+    name: proxysql
+    enabled: true
+    state: started
+
+- name: proxysql | setup proxysql
+  ansible.builtin.shell: |
+    mysql -u admin -padmin -h 127.0.0.1 -P 6032 -e "
+      INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (0,'10.100.100.30',3306);
+      INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (0,'10.100.100.31',3306);
+      UPDATE global_variables SET variable_value='{{ mysql_monitor_user }}'
+        WHERE variable_name='mysql-monitor_username';
+      UPDATE global_variables SET variable_value='{{ mysql_monitor_password }}'
+        WHERE variable_name='mysql-monitor_password';
+      LOAD MYSQL VARIABLES TO RUNTIME;
+      SAVE MYSQL VARIABLES TO DISK;
+      LOAD MYSQL SERVERS TO RUNTIME;
+      SAVE MYSQL SERVERS TO DISK;
+      INSERT INTO mysql_users (username,password) VALUES ('{{ user_db }}','{{ user_db_pass }}');
+      LOAD MYSQL USERS TO RUNTIME;
+      SAVE MYSQL USERS TO DISK;"

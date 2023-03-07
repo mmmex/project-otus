@@ -1,0 +1,40 @@
+---
+# Playbook is required. Do not skip it
+- include_tasks: assert.yml
+
+# Playbook is required. Do not skip it
+- include_tasks: ip.yml
+  when: percona_cluster.enabled
+
+- include_tasks: install.yml
+
+- include_tasks: root.yml
+  when: not arbiter
+
+- include_tasks: certs.yml
+  when: host_count != '1'
+
+- include_tasks: config.yml
+
+- include_tasks: cluster.yml
+  when: percona_cluster.enabled
+
+- include_tasks: scale.yml
+  when: percona_cluster.enabled
+
+- include_tasks: arbiter.yml
+  when: arbiter
+
+- include_tasks: backup.yml
+  when: percona_backup.enabled
+
+- include_tasks: databases.yml
+  when: percona_databases | length > 0
+
+- include_tasks: users.yml
+  when: percona_users | length > 0
+
+- include_tasks: pmm.yml
+  when:
+    - percona_pmm.enabled
+    - not arbiter

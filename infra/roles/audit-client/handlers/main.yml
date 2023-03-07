@@ -1,0 +1,4 @@
+---
+# handlers file for audit-client
+- name: restart auditd
+  command: systemctl restart auditd

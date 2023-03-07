@@ -1,0 +1,6 @@
+---
+- hosts: infra
+  become: true
+  roles:
+  - role: journald-client
+  - role: audit-client

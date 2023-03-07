@@ -1,0 +1,14 @@
+---
+- ansible.builtin.include_tasks: prepare.yml
+
+- ansible.builtin.include_tasks: firewall.yml
+
+- ansible.builtin.include_tasks: lvm.yml
+
+- ansible.builtin.include_tasks: gluster_replacing.yml
+  when:
+    - is_replacing | bool
+    - master_ghost is defined
+
+# - ansible.builtin.include_tasks: gluster.yml
+#   when: not is_replacing

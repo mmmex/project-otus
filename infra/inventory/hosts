@@ -1,0 +1,38 @@
+[infra]
+bx-nlb01.org.test ansible_host=10.100.100.10
+bx-nlb02.org.test ansible_host=10.100.100.11
+bx-app01.org.test ansible_host=10.100.100.20
+bx-app02.org.test ansible_host=10.100.100.21
+bx-app03.org.test ansible_host=10.100.100.22
+bx-db01.org.test ansible_host=10.100.100.30
+bx-db02.org.test ansible_host=10.100.100.31
+bx-db03.org.test ansible_host=10.100.100.32
+
+[infraservers]
+infra.org.test ansible_host=10.100.100.250
+
+[balancers]
+bx-nlb01.org.test
+bx-nlb02.org.test
+
+[percona_cluster]
+bx-db01.org.test
+bx-db02.org.test
+bx-db03.org.test
+
+[bitrix_app]
+bx-app01.org.test
+bx-app02.org.test
+bx-app03.org.test
+
+[gluster_cluster]
+bx-app01.org.test
+bx-app02.org.test
+bx-app03.org.test
+
+[bx-stage1]
+bx-nlb01.org.test
+bx-nlb02.org.test
+bx-db01.org.test
+bx-db02.org.test
+bx-db03.org.test

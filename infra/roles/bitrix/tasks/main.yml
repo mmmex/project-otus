@@ -1,0 +1,24 @@
+---
+- ansible.builtin.include_tasks: bitrixenv.yml
+  when: bitrixenv | bool
+
+- ansible.builtin.include_tasks: prepare.yml
+  when: not bitrixenv
+
+- ansible.builtin.include_tasks: bx-nginx.yml
+  when: not bitrixenv
+
+- ansible.builtin.include_tasks: bx-php.yml
+  when: not bitrixenv
+
+- ansible.builtin.include_tasks: bx-apache.yml
+  when: not bitrixenv
+
+- ansible.builtin.include_tasks: bx-proxysql.yml
+  when: not bitrixenv
+
+- ansible.builtin.include_tasks: bx-redis.yml
+  when: not bitrixenv
+
+- ansible.builtin.include_tasks: bx-finish.yml
+  when: not bitrixenv

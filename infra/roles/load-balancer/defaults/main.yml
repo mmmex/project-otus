@@ -1,0 +1,20 @@
+---
+# defaults file for load-balancer
+upstreams_servers:
+  - "10.100.100.20:80"
+  - "10.100.100.21:80"
+  - "10.100.100.22:80"
+
+vip_ip: "10.100.100.100:80"
+
+vrrp_instance: 
+  ip: "10.100.100.100"
+  auth_pass: "vrrpsecret"
+
+real_servers:
+  - ip: "10.100.100.10 80"
+    weight: 1
+    connect_timeout: 2
+  - ip: "10.100.100.11 80"
+    weight: 1
+    connect_timeout: 2

@@ -1,0 +1,9 @@
+---
+# defaults file for proxmox
+api_host: 192.168.2.2
+api_user: ansible@pve
+api_password: "Ansible@!"
+node: pve
+# tmpl-centos7-cloud-init, tmpl-ubuntu-20.04-cloud-init, tmpl-debian11
+clone_vm: tmpl-centos7-cloud-init
+key_name: id_rsa.pub

@@ -1,0 +1,13 @@
+---
+- hosts: percona_cluster
+  become: true
+  tasks:
+    - name: Stop mysql
+      ansible.builtin.systemd:
+        name: mysql
+        state: stopped
+
+    - name: Remove mysql config and databases
+      shell: |
+        rm -rf /var/lib/mysql/* /var/log/mysqld.log /var/log/mysql/* ~/.my.cnf /etc/mysql/*
+      

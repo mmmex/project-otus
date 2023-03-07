@@ -1,0 +1,24 @@
+---
+# https://docs.percona.com/percona-xtradb-cluster/8.0/howtos/proxysql.html#manual-configuration
+- name: proxysql | start and enable unit
+  ansible.builtin.systemd:
+    name: proxysql
+    enabled: true
+    state: started
+
+- name: proxysql | setup proxysql
+  ansible.builtin.shell: |
+    mysql -u admin -padmin -h 127.0.0.1 -P 6032 -e "
+      INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (0,'10.100.100.30',3306);
+      INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (0,'10.100.100.31',3306);
+      UPDATE global_variables SET variable_value='proxysql'
+        WHERE variable_name='mysql-monitor_username';
+      UPDATE global_variables SET variable_value='Otus2023!'
+        WHERE variable_name='mysql-monitor_password';
+      LOAD MYSQL VARIABLES TO RUNTIME;
+      SAVE MYSQL VARIABLES TO DISK;
+      LOAD MYSQL SERVERS TO RUNTIME;
+      SAVE MYSQL SERVERS TO DISK;
+      INSERT INTO mysql_users (username,password) VALUES ('bitrix','Otus2023!');
+      LOAD MYSQL USERS TO RUNTIME;
+      SAVE MYSQL USERS TO DISK;"

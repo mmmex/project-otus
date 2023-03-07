@@ -1,0 +1,8 @@
+---
+- name: bind server | provision named config
+  hosts: infra.org.test
+  become: true
+  roles:
+    - bind
+  vars_files:
+    - vars/bind.yml

@@ -1,0 +1,18 @@
+---
+- name: keepalived | copy config file
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: restart keepalived
+
+- name: keepalived | copy script file
+  ansible.builtin.copy:
+    src: files/nat-switch
+    dest: /usr/local/bin/nat-switch
+    mode: 0755
+  notify: restart keepalived
+
+- name: keepalived | enable unit
+  ansible.builtin.systemd:
+    name: keepalived
+    enabled: true

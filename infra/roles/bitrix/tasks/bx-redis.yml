@@ -1,0 +1,49 @@
+---
+- name: redis | create /etc/redis/ directory
+  ansible.builtin.file:
+    path: /etc/redis
+    owner: redis
+    group: apache
+    state: directory
+
+- name: redis | create /var/log/redis/ directory
+  ansible.builtin.file:
+    path: /var/log/redis
+    owner: redis
+    group: apache
+    state: directory
+
+- name: redis | create /etc/systemd/system/redis.service.d/ directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/redis.service.d
+    state: directory
+
+- name: redis | make custom.conf
+  ansible.builtin.ini_file:
+    path: /etc/systemd/system/redis.service.d/custom.conf
+    section: Service
+    option: Group
+    value: apache
+    create: true
+    state: present
+
+- name: redis | daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: redis | add redis in apache group
+  ansible.builtin.user:
+    name: redis
+    groups: apache
+    append: true
+
+- name: redis | copy config files
+  ansible.builtin.copy:
+    src: files/redis/
+    dest: /etc/
+
+- name: redis | enable and start unit
+  ansible.builtin.systemd:
+    name: redis
+    enabled: true
+    state: started
