@@ -299,7 +299,44 @@ State: Peer in Cluster (Connected)
 
 ### Memcached, сессии
 
+Memcached сервер находится отдельно на хосте infra.org.test в контейнере. Этапы настройки:
 
+1. Добавить в файл конфигурации /var/www/html/bx-site/bitrix/php_interface/dbconn.php строки:
+```php
+define('BX_SECURITY_SESSION_MEMCACHE_HOST', 'memcached-sessions');
+define('BX_SECURITY_SESSION_MEMCACHE_PORT', 11211);
+```
+
+2. В /var/www/html/bx-site/bitrix/php_interface/dbconn.php:
+```php
+  'session' => 
+  array (
+    'value' =>
+    array (
+      'mode' => 'default',
+      'handlers' =>
+        array (
+          'general' =>
+            array (
+             'type' => 'memcache',
+             'host' => '10.100.100.250',
+             'port' => '11211',
+            ),
+        ),
+    ),
+    'readonly' => true,
+  ),
+```
+
+3. Запуск плэйбука:
+```yaml
+---
+- name: memcached server | setup
+  hosts: infra.org.test
+  become: true
+  roles:
+    - memcached
+```
 
 ### Мониторинг, логгирование, репозиторий, DNS-сервер
 
