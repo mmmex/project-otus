@@ -9,7 +9,26 @@
       - lvm2
       - centos-release-gluster
       - firewalld
+      - python3-pip
     state: present
+
+- name: prepare | install dependencies for pexpect
+  ansible.builtin.yum:
+    name:
+      - python3-pip
+    state: present
+  delegate_to: "{{ master_ghost }}"
+
+- name: Install dependencies
+  pip:
+    name: pexpect>=3.3
+    executable: pip3
+
+- name: Install dependencies for pexpect
+  pip:
+    name: pexpect>=3.3
+    executable: pip3
+  delegate_to: "{{ master_ghost }}"
 
 - name: prepare | install gluster-server
   ansible.builtin.yum:

@@ -31,8 +31,8 @@
     ssh_key_type: "ed25519"
     password: "{{ bx_root_password }}"
 
-- name: prepare | yum clean all
-  command: yum clean all
+# - name: prepare | yum clean all
+#   command: yum clean all
 
 - name: prepare | yum update
   ansible.builtin.yum:

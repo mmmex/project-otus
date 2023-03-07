@@ -15,11 +15,29 @@
     path: /var/www/html/bx-site
     state: directory
 
-- name: gluster restore | make probe and add replica
+- name: gluster restore | make probe
   ansible.builtin.shell: |
     gluster peer probe "{{ ansible_hostname }}"
-    gluster volume add-brick gv0 replica 3 "{{ ansible_hostname }}":/data/brick1/gv0
   delegate_to: "{{ master_ghost }}"
+  register: result_probe
+
+- name: Debug result
+  ansible.builtin.debug:
+    var: result_probe
+
+- name: gluster restore | add volume
+  ansible.builtin.expect:
+    command: gluster volume add-brick gv0 replica "{{ replica_count }}" "{{ ansible_hostname }}":/data/brick1/gv0
+    responses:
+      Do you still want to continue?: "y"
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  delegate_to: "{{ master_ghost }}"
+  register: result
+
+- name: Debug result
+  ansible.builtin.debug:
+    var: result
 
 - name: gluster restore | mount volume
   ansible.builtin.mount:

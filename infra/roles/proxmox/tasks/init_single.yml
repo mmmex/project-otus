@@ -15,6 +15,7 @@
   shell: |
     ssh root@192.168.2.2 'qm set {{ vmid }} --ipconfig0 ip={{ ipaddress }},gw={{ gateway }}'
     ssh root@192.168.2.2 'qm set {{ vmid }} --net0 "model=virtio,bridge=vmbr2"'
+  when: need_net_config | bool
 
 - name: Add additional disk scsi1 size=500G
   shell: |
@@ -45,6 +46,6 @@
     node:         "{{ node }}"
     state:        started
 
-- name: Waiting for 300 sec
+- name: Waiting for 200 sec
   ansible.builtin.wait_for:
-    timeout: 300
+    timeout: 200

@@ -13,13 +13,15 @@
     sockets: 1
     memory: 2048
     scsi1_disk_size: 500
+    need_net_config: true
 
 - name: repair bx-app node | starting setup
   hosts: bx-app03.org.test
   become: true
   vars:
-    master_ghost: bx-app02.org.test
+    master_ghost: bx-app01.org.test
     is_replacing: true
+    replica_count: 3
   roles:
     - role: etc_hosts
     - role: gluster-simple
